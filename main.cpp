@@ -2,6 +2,34 @@
 #include <vector>
 #include <string>
 
+void move_up(std::vector<std::string>& b, int& y, int x)
+{
+    if (y > 0 && b[y-1][x] != '#')
+    {
+        b[y][x] = '.';
+        y--;
+        b[y][x] = '@';
+    }
+    else
+    {
+        std::cout << "Nie możesz wejść w ściane!" << std::endl;
+    }  
+}
+
+void move_down(std::vector<std::string>& b, int& y, int x)
+{
+    if (y + 1 < b.size() && b[y+1][x] != '#')
+    {
+        b[y][x] = '.';
+        y++;
+        b[y][x] = '@';
+    }
+    else
+    {
+        std::cout << "Nie możesz wejść w ściane!" << std::endl;
+    }  
+}
+
 void move_right(std::vector<std::string>& b, int y, int& x)
 {
     if (x + 1 < b[y].size() && b[y][x + 1] != '#')
@@ -52,6 +80,8 @@ int main()
     
     move_right(board, y, x);
     move_left(board, y, x);
+    move_down(board, y, x);
+    move_up(board, y, x);
 
     
 
