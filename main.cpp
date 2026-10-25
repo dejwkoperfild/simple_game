@@ -2,60 +2,52 @@
 #include <vector>
 #include <string>
 
-void move_up(std::vector<std::string>& b, int& y, int x)
+void move_player(std::vector<std::string>& b, int& y, int& x, char direction)
 {
-    if (y > 0 && b[y-1][x] != '#')
+    int dx = 0;
+    int dy = 0;
+
+    switch (direction)
+{
+    case 'w':
+        dy = -1;
+        break;
+
+    case 'a':
+        dx = -1;
+        break;
+    
+    case 's':
+        dy = 1;
+        break;
+    
+    case 'd':
+        dx = 1;
+        break;
+
+    default:
+        std::cout << "NIeznany kierunek!" << '\n';
+        return;
+}
+    int new_x = x + dx;
+    int new_y = y + dy;
+
+    if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
     {
         b[y][x] = '.';
-        y--;
-        b[y][x] = '@';
+        b[new_y][new_x] = '@';
+        x = new_x;
+        y = new_y;
     }
     else
-    {
-        std::cout << "Nie możesz wejść w ściane!" << std::endl;
-    }  
+        std::cout << "Brak możliwości ruchu!" << '\n';
 }
 
-void move_down(std::vector<std::string>& b, int& y, int x)
+void display_board(const std::vector<std::string>& b)
 {
-    if (y + 1 < b.size() && b[y+1][x] != '#')
-    {
-        b[y][x] = '.';
-        y++;
-        b[y][x] = '@';
+     for(const std::string& s : b){
+        std::cout << s << '\n';
     }
-    else
-    {
-        std::cout << "Nie możesz wejść w ściane!" << std::endl;
-    }  
-}
-
-void move_right(std::vector<std::string>& b, int y, int& x)
-{
-    if (x + 1 < b[y].size() && b[y][x + 1] != '#')
-        {
-            b[y][x] = '.';
-            x++;
-            b[y][x] = '@';
-        }
-    else
-    {
-        std::cout << "Nie możesz wejść w ściane!" << std::endl;
-    }   
-}
-
-void move_left(std::vector<std::string>& b, int y, int& x)
-{
-    if (x - 1 >= 0 && b[y][x - 1] != '#')
-        {
-            b[y][x] = '.';
-            x--;
-            b[y][x] = '@';
-        }
-    else
-    {
-        std::cout << "Nie możesz wejść w ściane!" << std::endl;
-    }   
 }
 
 int main()
@@ -72,26 +64,27 @@ int main()
         "##########",
     };
 
+     std::cout << "Witaj w Dungeon Explorer!" << std::endl;
+
     // początkowe położenie gracza
-    int y = 1; // kolumna
-    int x = 1; // wiersz
-
-    // przesunięcie gracza w prawo
-    
-    move_right(board, y, x);
-    move_left(board, y, x);
-    move_down(board, y, x);
-    move_up(board, y, x);
-
-    
+    int y = 1; // wiersz
+    int x = 1; // kolumna   
 
     // wyświetlenie planszy
-    for(const std::string& s : board){
-        std::cout << s << '\n';
+    display_board(board);
+
+    char direction;
+    std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
+    while (std::cin >> direction){
+        if (direction == 'q')
+            break;
+        move_player(board, y, x, direction);
+        display_board(board);
+        std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
     }
+
    
 
-    std::cout << "Witaj w Dungeon Explorer!" << std::endl;
-
+   
     return 0;
 }
