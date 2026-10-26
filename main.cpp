@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-void move_player(std::vector<std::string>& b, int& y, int& x, char direction, int& score, int& treasures)
+void move_player(std::vector<std::string>& b, int& y, int& x, char direction, int& score, int& treasures, int& health)
 {
     int dx = 0;
     int dy = 0;
@@ -34,6 +34,14 @@ void move_player(std::vector<std::string>& b, int& y, int& x, char direction, in
 
     if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
     {
+        if (b[new_y][new_x] == 'M')
+        {
+            health--;
+            std::cout << "Potwór cię zaatakował!" << '\n';
+            return;
+        }
+
+
         if (b[new_y][new_x] == '$')
         {
             score += 10;
@@ -59,6 +67,7 @@ void display_board(const std::vector<std::string>& b)
 int main()
 {
     int score = 0;
+    int health = 3;
 
     // zmienna przechowująca plansze
     std::vector<std::string> board = {
@@ -66,7 +75,7 @@ int main()
         "#@....$..#",
         "#........#",
         "#.$.##...#",
-        "#........#",
+        "#....M...#",
         "#.....$..#",
         "#..$.....#",
         "##########",
@@ -96,10 +105,16 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, y, x, direction, score, treasures);
+        move_player(board, y, x, direction, score, treasures, health);
         display_board(board);
         std::cout << "Twoja obecna ilosc punktów to: " << score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
+        std::cout << "Życie: " << health << '\n';
+        if (health <= 0)
+        {
+            std::cout << "Przegrałeś!" << std::endl;
+            break;
+        }
         if (treasures == 0)
         {
             std::cout << "Gratulacje! Zebrałeś wszystkie skarby!" << std::endl;
