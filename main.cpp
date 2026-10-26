@@ -10,7 +10,14 @@ struct Player
     int health = 3;
 };
 
-void move_player(std::vector<std::string>& b, Player& player, char direction, int& treasures)
+struct Enemy
+{
+    int x = 5;
+    int y = 4;
+    int health = 2;
+};
+
+void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char direction, int& treasures)
 {
     int dx = 0;
     int dy = 0;
@@ -42,11 +49,23 @@ void move_player(std::vector<std::string>& b, Player& player, char direction, in
 
     if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
     {
-        if (b[new_y][new_x] == 'M')
+        if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
         {
-            player.health--;
-            std::cout << "Potwór cię zaatakował!" << '\n';
+            enemy.health--;
+            if (enemy.health <= 0)
+            {
+                std::cout << "Potwór pokonany" << '\n';
+                b[enemy.y][enemy.x] = '.';
+                return;
+            }
+            else
+            {
+                player.health--;
+                std::cout << "Potwór cię zaatakował!" << '\n';
+                std::cout << "Zdrowie gracza: " << player.health << '\n';
+                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
             return;
+            }
         }
 
 
@@ -75,6 +94,7 @@ void display_board(const std::vector<std::string>& b)
 int main()
 {
     Player player;
+    Enemy enemy;
     std::cout << "Liczba punktów gracz: " << player.score << std::endl;
     std::cout << "Zdrowie gracza: " << player.health << std::endl;
 
@@ -110,7 +130,7 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, player, direction, treasures);
+        move_player(board, player, enemy, direction, treasures);
         display_board(board);
         std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
