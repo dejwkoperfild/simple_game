@@ -2,7 +2,22 @@
 #include <vector>
 #include <string>
 
-void move_player(std::vector<std::string>& b, int& y, int& x, char direction, int& score, int& treasures)
+struct Player
+{
+    int x = 1;
+    int y = 1;
+    int score = 0;
+    int health = 3;
+};
+
+struct Enemy
+{
+    int x = 5;
+    int y = 4;
+    int health = 2;
+};
+
+void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char direction, int& treasures)
 {
     int dx = 0;
     int dy = 0;
@@ -29,21 +44,41 @@ void move_player(std::vector<std::string>& b, int& y, int& x, char direction, in
         std::cout << "Nieznany kierunek!" << '\n';
         return;
 }
-    int new_x = x + dx;
-    int new_y = y + dy;
+    int new_x = player.x + dx;
+    int new_y = player.y + dy;
 
     if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
     {
+        if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
+        {
+            enemy.health--;
+            if (enemy.health <= 0)
+            {
+                std::cout << "Potwór pokonany" << '\n';
+                b[enemy.y][enemy.x] = '.';
+                return;
+            }
+            else
+            {
+                player.health--;
+                std::cout << "Potwór cię zaatakował!" << '\n';
+                std::cout << "Zdrowie gracza: " << player.health << '\n';
+                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
+            return;
+            }
+        }
+
+
         if (b[new_y][new_x] == '$')
         {
-            score += 10;
+            player.score += 10;
             treasures--;
         }
             
-        b[y][x] = '.';
+        b[player.y][player.x] = '.';
         b[new_y][new_x] = '@';
-        x = new_x;
-        y = new_y;
+        player.x = new_x;
+        player.y = new_y;
     }
     else
         std::cout << "Brak możliwości ruchu!" << '\n';
@@ -58,7 +93,10 @@ void display_board(const std::vector<std::string>& b)
 
 int main()
 {
-    int score = 0;
+    Player player;
+    Enemy enemy;
+    std::cout << "Liczba punktów gracz: " << player.score << std::endl;
+    std::cout << "Zdrowie gracza: " << player.health << std::endl;
 
     // zmienna przechowująca plansze
     std::vector<std::string> board = {
@@ -66,7 +104,7 @@ int main()
         "#@....$..#",
         "#........#",
         "#.$.##...#",
-        "#........#",
+        "#....M...#",
         "#.....$..#",
         "#..$.....#",
         "##########",
@@ -84,10 +122,6 @@ int main()
     std::cout << "Liczba skarbów na planszy: " << treasures << std::endl;
     std::cout << "Witaj w Dungeon Explorer!" << std::endl;
 
-    // początkowe położenie gracza
-    int y = 1; // wiersz
-    int x = 1; // kolumna   
-
     // wyświetlenie planszy
     display_board(board);
 
@@ -96,14 +130,20 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, y, x, direction, score, treasures);
+        move_player(board, player, enemy, direction, treasures);
         display_board(board);
-        std::cout << "Twoja obecna ilosc punktów to: " << score << '\n';
+        std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
+        std::cout << "Życie: " << player.health << '\n';
+        if (player.health <= 0)
+        {
+            std::cout << "Przegrałeś!" << std::endl;
+            break;
+        }
         if (treasures == 0)
         {
             std::cout << "Gratulacje! Zebrałeś wszystkie skarby!" << std::endl;
-            std::cout << "Twój końcowy wynik: " << score << " punktów." <<  std::endl;
+            std::cout << "Twój końcowy wynik: " << player.score << " punktów." <<  std::endl;
             break;
         }
         std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
