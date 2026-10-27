@@ -17,6 +17,23 @@ struct Enemy
     int health = 2;
 };
 
+void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
+{
+    enemy.health--;
+            if (enemy.health <= 0)
+            {
+                std::cout << "Potwór pokonany" << '\n';
+                b[enemy.y][enemy.x] = '.';
+            }
+            else
+            {
+                player.health--;
+                std::cout << "Potwór cię zaatakował!" << '\n';
+                std::cout << "Zdrowie gracza: " << player.health << '\n';
+                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
+            }
+}
+
 void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char direction, int& treasures)
 {
     int dx = 0;
@@ -51,21 +68,8 @@ void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char
     {
         if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
         {
-            enemy.health--;
-            if (enemy.health <= 0)
-            {
-                std::cout << "Potwór pokonany" << '\n';
-                b[enemy.y][enemy.x] = '.';
-                return;
-            }
-            else
-            {
-                player.health--;
-                std::cout << "Potwór cię zaatakował!" << '\n';
-                std::cout << "Zdrowie gracza: " << player.health << '\n';
-                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
+            fight(player, enemy, b);
             return;
-            }
         }
 
 
