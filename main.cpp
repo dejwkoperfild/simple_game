@@ -98,7 +98,9 @@ void display_board(const std::vector<std::string>& b)
 int main()
 {
     Player player;
-    Enemy enemy;
+    std::vector<Enemy> enemies = {
+    Enemy{5, 4, 2},
+    };
     std::cout << "Liczba punktów gracz: " << player.score << std::endl;
     std::cout << "Zdrowie gracza: " << player.health << std::endl;
 
@@ -134,7 +136,7 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, player, enemy, direction, treasures);
+        move_player(board, player, enemies[0], direction, treasures);
         display_board(board);
         std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
