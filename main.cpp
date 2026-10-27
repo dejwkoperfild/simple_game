@@ -17,7 +17,24 @@ struct Enemy
     int health = 2;
 };
 
-void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char direction, int& treasures)
+void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
+{
+    enemy.health--;
+            if (enemy.health <= 0)
+            {
+                std::cout << "Potwór pokonany" << '\n';
+                b[enemy.y][enemy.x] = '.';
+            }
+            else
+            {
+                player.health--;
+                std::cout << "Potwór cię zaatakował!" << '\n';
+                std::cout << "Zdrowie gracza: " << player.health << '\n';
+                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
+            }
+}
+
+void move_player(std::vector<std::string>& b, Player& player, std::vector<Enemy>& enemies, char direction, int& treasures)
 {
     int dx = 0;
     int dy = 0;
@@ -49,22 +66,12 @@ void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char
 
     if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
     {
-        if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
+        for(Enemy& enemy : enemies)
         {
-            enemy.health--;
-            if (enemy.health <= 0)
+            if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
             {
-                std::cout << "Potwór pokonany" << '\n';
-                b[enemy.y][enemy.x] = '.';
+                fight(player, enemy, b);
                 return;
-            }
-            else
-            {
-                player.health--;
-                std::cout << "Potwór cię zaatakował!" << '\n';
-                std::cout << "Zdrowie gracza: " << player.health << '\n';
-                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
-            return;
             }
         }
 
@@ -94,7 +101,10 @@ void display_board(const std::vector<std::string>& b)
 int main()
 {
     Player player;
-    Enemy enemy;
+    std::vector<Enemy> enemies = {
+    Enemy{5, 4, 2},
+    Enemy{7, 2, 3}
+    };
     std::cout << "Liczba punktów gracz: " << player.score << std::endl;
     std::cout << "Zdrowie gracza: " << player.health << std::endl;
 
@@ -102,7 +112,7 @@ int main()
     std::vector<std::string> board = {
         "##########",
         "#@....$..#",
-        "#........#",
+        "#......M.#",
         "#.$.##...#",
         "#....M...#",
         "#.....$..#",
@@ -130,7 +140,7 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, player, enemy, direction, treasures);
+        move_player(board, player, enemies, direction, treasures);
         display_board(board);
         std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
