@@ -34,7 +34,7 @@ void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
             }
 }
 
-void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char direction, int& treasures)
+void move_player(std::vector<std::string>& b, Player& player, std::vector<Enemy>& enemies, char direction, int& treasures)
 {
     int dx = 0;
     int dy = 0;
@@ -66,10 +66,13 @@ void move_player(std::vector<std::string>& b, Player& player, Enemy& enemy, char
 
     if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
     {
-        if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
+        for(Enemy& enemy : enemies)
         {
-            fight(player, enemy, b);
-            return;
+            if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
+            {
+                fight(player, enemy, b);
+                return;
+            }
         }
 
 
@@ -100,6 +103,7 @@ int main()
     Player player;
     std::vector<Enemy> enemies = {
     Enemy{5, 4, 2},
+    Enemy{7, 2, 3}
     };
     std::cout << "Liczba punktów gracz: " << player.score << std::endl;
     std::cout << "Zdrowie gracza: " << player.health << std::endl;
@@ -108,7 +112,7 @@ int main()
     std::vector<std::string> board = {
         "##########",
         "#@....$..#",
-        "#........#",
+        "#......M.#",
         "#.$.##...#",
         "#....M...#",
         "#.....$..#",
@@ -136,7 +140,7 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, player, enemies[0], direction, treasures);
+        move_player(board, player, enemies, direction, treasures);
         display_board(board);
         std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
