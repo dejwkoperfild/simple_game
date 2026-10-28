@@ -12,15 +12,36 @@ struct Player
 
 struct Enemy
 {
-    int x = 5;
-    int y = 4;
-    int health = 2;
+    int x;
+    int y;
+    int health;
+
+    Enemy(int start_x, int start_y, int start_health)
+    : x(start_x), y(start_y), health(start_health)
+    {}
+
+    void take_damage(int damage)
+    {
+        this->health -=damage;
+        if(this->health < 0)
+            this->health = 0;
+    }
+
+    bool is_alive() const
+{
+    return this->health>0;
+}
+
+    int get_health() const
+    {
+        return this->health;
+    }
 };
 
 void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
 {
-    enemy.health--;
-            if (enemy.health <= 0)
+    enemy.take_damage(1);
+            if (!enemy.is_alive())
             {
                 std::cout << "Potwór pokonany" << '\n';
                 b[enemy.y][enemy.x] = '.';
@@ -30,7 +51,7 @@ void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
                 player.health--;
                 std::cout << "Potwór cię zaatakował!" << '\n';
                 std::cout << "Zdrowie gracza: " << player.health << '\n';
-                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
+                std::cout << "Zdrowie potwora: " << enemy.get_health() << '\n';
             }
 }
 
@@ -68,7 +89,7 @@ void move_player(std::vector<std::string>& b, Player& player, std::vector<Enemy>
     {
         for(Enemy& enemy : enemies)
         {
-            if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
+            if (new_x == enemy.x && new_y == enemy.y && enemy.is_alive())
             {
                 fight(player, enemy, b);
                 return;
