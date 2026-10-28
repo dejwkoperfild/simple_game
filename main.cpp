@@ -12,9 +12,13 @@ struct Player
 
 struct Enemy
 {
-    int x = 5;
-    int y = 4;
-    int health = 2;
+    int x;
+    int y;
+    int health;
+
+    Enemy(int start_x, int start_y, int start_health)
+    : x(start_x), y(start_y), health(start_health)
+    {}
 
     void take_damage(int damage)
     {
@@ -27,6 +31,11 @@ struct Enemy
 {
     return this->health>0;
 }
+
+    int get_health() const
+    {
+        return this->health;
+    }
 };
 
 void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
@@ -42,7 +51,7 @@ void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
                 player.health--;
                 std::cout << "Potwór cię zaatakował!" << '\n';
                 std::cout << "Zdrowie gracza: " << player.health << '\n';
-                std::cout << "Zdrowie potwora: " << enemy.health << '\n';
+                std::cout << "Zdrowie potwora: " << enemy.get_health() << '\n';
             }
 }
 
