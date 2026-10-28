@@ -19,13 +19,20 @@ struct Enemy
     void take_damage(int damage)
     {
         this->health -=damage;
+        if(this->health < 0)
+            this->health = 0;
     }
+
+    bool is_alive() const
+{
+    return this->health>0;
+}
 };
 
 void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
 {
-    enemy.take_damage(2);
-            if (enemy.health <= 0)
+    enemy.take_damage(1);
+            if (!enemy.is_alive())
             {
                 std::cout << "Potwór pokonany" << '\n';
                 b[enemy.y][enemy.x] = '.';
@@ -73,7 +80,7 @@ void move_player(std::vector<std::string>& b, Player& player, std::vector<Enemy>
     {
         for(Enemy& enemy : enemies)
         {
-            if (new_x == enemy.x && new_y == enemy.y && enemy.health > 0)
+            if (new_x == enemy.x && new_y == enemy.y && enemy.is_alive())
             {
                 fight(player, enemy, b);
                 return;
