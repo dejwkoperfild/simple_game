@@ -15,11 +15,16 @@ struct Enemy
     int x = 5;
     int y = 4;
     int health = 2;
+
+    void take_damage(int damage)
+    {
+        this->health -=damage;
+    }
 };
 
 void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
 {
-    enemy.health--;
+    enemy.take_damage(2);
             if (enemy.health <= 0)
             {
                 std::cout << "Potwór pokonany" << '\n';
