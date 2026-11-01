@@ -3,6 +3,7 @@
 #include <string>
 #include <stdexcept>
 
+
 struct Player
 {
     int x = 1;
@@ -82,7 +83,28 @@ void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
             }
 }
 
-void move_player(std::vector<std::string>& b, Player& player, std::vector<Enemy>& enemies, char direction, int& treasures)
+struct Game
+{
+    int treasures = 0;
+    Player player;
+    std::vector<Enemy> enemies = {
+        Enemy{5,4,2},
+        Enemy{7,2,3}
+    };
+    std::vector<std::string> board = {
+        "##########",
+        "#@....$..#",
+        "#......M.#",
+        "#.$.##...#",
+        "#....M...#",
+        "#.....$..#",
+        "#..$.....#",
+        "##########",
+    };
+
+};
+
+void move_player(Game& game, char direction)
 {
     int dx = 0;
     int dy = 0;
@@ -109,31 +131,31 @@ void move_player(std::vector<std::string>& b, Player& player, std::vector<Enemy>
         std::cout << "Nieznany kierunek!" << '\n';
         return;
 }
-    int new_x = player.x + dx;
-    int new_y = player.y + dy;
+    int new_x = game.player.x + dx;
+    int new_y = game.player.y + dy;
 
-    if (new_y >= 0 && new_y < static_cast<int>(b.size()) && new_x >= 0  && new_x < static_cast<int>(b[new_y].size()) && b[new_y][new_x] != '#')
+    if (new_y >= 0 && new_y < static_cast<int>(game.board.size()) && new_x >= 0  && new_x < static_cast<int>(game.board[new_y].size()) && game.board[new_y][new_x] != '#')
     {
-        for(Enemy& enemy : enemies)
+        for (Enemy& enemy : game.enemies)
         {
             if (new_x == enemy.x && new_y == enemy.y && enemy.is_alive())
             {
-                fight(player, enemy, b);
+                fight(game.player, enemy, game.board);
                 return;
             }
         }
 
 
-        if (b[new_y][new_x] == '$')
+        if (game.board[new_y][new_x] == '$')
         {
-            player.score += 10;
-            treasures--;
+            game.player.score += 10;
+            game.treasures--;
         }
             
-        b[player.y][player.x] = '.';
-        b[new_y][new_x] = '@';
-        player.x = new_x;
-        player.y = new_y;
+        game.board[game.player.y][game.player.x] = '.';
+        game.board[new_y][new_x] = '@';
+        game.player.x = new_x;
+        game.player.y = new_y;
     }
     else
         std::cout << "Brak możliwości ruchu!" << '\n';
@@ -148,60 +170,43 @@ void display_board(const std::vector<std::string>& b)
 
 int main()
 {
-    Player player;
-    std::vector<Enemy> enemies = {
-    Enemy{5, 4, 2},
-    Enemy{7, 2, 3}
-    };
-    std::cout << "Liczba punktów gracz: " << player.score << std::endl;
-    std::cout << "Zdrowie gracza: " << player.get_health() << std::endl;
+    Game game;
+    std::cout << "Liczba punktów gracz: " << game.player.score << std::endl;
+    std::cout << "Zdrowie gracza: " << game.player.get_health() << std::endl;
 
-    // zmienna przechowująca plansze
-    std::vector<std::string> board = {
-        "##########",
-        "#@....$..#",
-        "#......M.#",
-        "#.$.##...#",
-        "#....M...#",
-        "#.....$..#",
-        "#..$.....#",
-        "##########",
-    };
-
-    int treasures = 0;
-    for (const std::string& row : board)
+    for (const std::string& row : game.board)
     {
         for (char field : row)
         {
             if (field == '$')
-                treasures++;
+                game.treasures++;
         }
     }
-    std::cout << "Liczba skarbów na planszy: " << treasures << std::endl;
+    std::cout << "Liczba skarbów na planszy: " << game.treasures << std::endl;
     std::cout << "Witaj w Dungeon Explorer!" << std::endl;
 
     // wyświetlenie planszy
-    display_board(board);
+    display_board(game.board);
 
     char direction;
     std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(board, player, enemies, direction, treasures);
-        display_board(board);
-        std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
-        std::cout << "Pozostałe skarby: " << treasures << '\n';
-        std::cout << "Życie: " << player.get_health() << '\n';
-        if (!player.is_alive())
+        move_player(game, direction);
+        display_board(game.board);
+        std::cout << "Twoja obecna ilosc punktów to: " << game.player.score << '\n';
+        std::cout << "Pozostałe skarby: " << game.treasures << '\n';
+        std::cout << "Życie: " << game.player.get_health() << '\n';
+        if (!game.player.is_alive())
         {
             std::cout << "Przegrałeś!" << std::endl;
             break;
         }
-        if (treasures == 0)
+        if (game.treasures == 0)
         {
             std::cout << "Gratulacje! Zebrałeś wszystkie skarby!" << std::endl;
-            std::cout << "Twój końcowy wynik: " << player.score << " punktów." <<  std::endl;
+            std::cout << "Twój końcowy wynik: " << game.player.score << " punktów." <<  std::endl;
             break;
         }
         std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
