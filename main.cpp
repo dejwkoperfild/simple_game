@@ -8,7 +8,23 @@ struct Player
     int x = 1;
     int y = 1;
     int score = 0;
-    int health = 3;
+    
+
+    void take_damage(int damage)
+    {
+        if (damage < 0)
+            throw std::invalid_argument("Obrażenia nie mogą być ujemne!");
+        
+        this->health -=damage;
+        if(this->health < 0)
+            this->health = 0;
+    }
+
+    bool is_alive() const {return this->health>0;}
+    int get_health() const {return this->health;}
+
+    private:
+        int health = 3;
 };
 
 struct Enemy
@@ -59,9 +75,9 @@ void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
             }
             else
             {
-                player.health--;
+                player.take_damage(1);
                 std::cout << "Potwór cię zaatakował!" << '\n';
-                std::cout << "Zdrowie gracza: " << player.health << '\n';
+                std::cout << "Zdrowie gracza: " << player.get_health() << '\n';
                 std::cout << "Zdrowie potwora: " << enemy.get_health() << '\n';
             }
 }
@@ -138,7 +154,7 @@ int main()
     Enemy{7, 2, 3}
     };
     std::cout << "Liczba punktów gracz: " << player.score << std::endl;
-    std::cout << "Zdrowie gracza: " << player.health << std::endl;
+    std::cout << "Zdrowie gracza: " << player.get_health() << std::endl;
 
     // zmienna przechowująca plansze
     std::vector<std::string> board = {
@@ -176,8 +192,8 @@ int main()
         display_board(board);
         std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
         std::cout << "Pozostałe skarby: " << treasures << '\n';
-        std::cout << "Życie: " << player.health << '\n';
-        if (player.health <= 0)
+        std::cout << "Życie: " << player.get_health() << '\n';
+        if (!player.is_alive())
         {
             std::cout << "Przegrałeś!" << std::endl;
             break;
