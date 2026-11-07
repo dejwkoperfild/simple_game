@@ -102,9 +102,11 @@ struct Game
         "##########",
     };
 
+    void move_player(char direction);
+
 };
 
-void move_player(Game& game, char direction)
+void Game::move_player(char direction)
 {
     int dx = 0;
     int dy = 0;
@@ -131,31 +133,31 @@ void move_player(Game& game, char direction)
         std::cout << "Nieznany kierunek!" << '\n';
         return;
 }
-    int new_x = game.player.x + dx;
-    int new_y = game.player.y + dy;
+    int new_x = player.x + dx;
+    int new_y = player.y + dy;
 
-    if (new_y >= 0 && new_y < static_cast<int>(game.board.size()) && new_x >= 0  && new_x < static_cast<int>(game.board[new_y].size()) && game.board[new_y][new_x] != '#')
+    if (new_y >= 0 && new_y < static_cast<int>(board.size()) && new_x >= 0  && new_x < static_cast<int>(board[new_y].size()) && board[new_y][new_x] != '#')
     {
-        for (Enemy& enemy : game.enemies)
+        for (Enemy& enemy : enemies)
         {
             if (new_x == enemy.x && new_y == enemy.y && enemy.is_alive())
             {
-                fight(game.player, enemy, game.board);
+                fight(player, enemy, board);
                 return;
             }
         }
 
 
-        if (game.board[new_y][new_x] == '$')
+        if (board[new_y][new_x] == '$')
         {
-            game.player.score += 10;
-            game.treasures--;
+            player.score += 10;
+            treasures--;
         }
             
-        game.board[game.player.y][game.player.x] = '.';
-        game.board[new_y][new_x] = '@';
-        game.player.x = new_x;
-        game.player.y = new_y;
+        board[player.y][player.x] = '.';
+        board[new_y][new_x] = '@';
+        player.x = new_x;
+        player.y = new_y;
     }
     else
         std::cout << "Brak możliwości ruchu!" << '\n';
@@ -193,7 +195,7 @@ int main()
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        move_player(game, direction);
+        game.move_player(direction);
         display_board(game.board);
         std::cout << "Twoja obecna ilosc punktów to: " << game.player.score << '\n';
         std::cout << "Pozostałe skarby: " << game.treasures << '\n';
