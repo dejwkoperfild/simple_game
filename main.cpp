@@ -104,6 +104,8 @@ struct Game
 
     void move_player(char direction);
 
+    void display_board() const;
+
 };
 
 void Game::move_player(char direction)
@@ -163,9 +165,9 @@ void Game::move_player(char direction)
         std::cout << "Brak możliwości ruchu!" << '\n';
 }
 
-void display_board(const std::vector<std::string>& b)
+void Game::display_board() const
 {
-     for(const std::string& s : b){
+     for(const std::string& s : board){
         std::cout << s << '\n';
     }
 }
@@ -188,7 +190,7 @@ int main()
     std::cout << "Witaj w Dungeon Explorer!" << std::endl;
 
     // wyświetlenie planszy
-    display_board(game.board);
+    game.display_board();
 
     char direction;
     std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
@@ -196,7 +198,7 @@ int main()
         if (direction == 'q')
             break;
         game.move_player(direction);
-        display_board(game.board);
+        game.display_board();
         std::cout << "Twoja obecna ilosc punktów to: " << game.player.score << '\n';
         std::cout << "Pozostałe skarby: " << game.treasures << '\n';
         std::cout << "Życie: " << game.player.get_health() << '\n';
