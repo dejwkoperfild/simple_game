@@ -106,6 +106,24 @@ struct Game
 
     void display_board() const;
 
+    void count_treasures()
+    {
+        treasures = 0;
+        for (const std::string& row : board)
+        {
+            for (char field : row)
+            {
+                if (field == '$')
+                    treasures++;
+            }
+        }
+    }
+
+    bool is_won() const
+    {
+        return treasures == 0;
+    }
+
 };
 
 void Game::move_player(char direction)
@@ -177,15 +195,7 @@ int main()
     Game game;
     std::cout << "Liczba punktów gracz: " << game.player.score << std::endl;
     std::cout << "Zdrowie gracza: " << game.player.get_health() << std::endl;
-
-    for (const std::string& row : game.board)
-    {
-        for (char field : row)
-        {
-            if (field == '$')
-                game.treasures++;
-        }
-    }
+    game.count_treasures();
     std::cout << "Liczba skarbów na planszy: " << game.treasures << std::endl;
     std::cout << "Witaj w Dungeon Explorer!" << std::endl;
 
@@ -207,7 +217,7 @@ int main()
             std::cout << "Przegrałeś!" << std::endl;
             break;
         }
-        if (game.treasures == 0)
+        if (game.is_won())
         {
             std::cout << "Gratulacje! Zebrałeś wszystkie skarby!" << std::endl;
             std::cout << "Twój końcowy wynik: " << game.player.score << " punktów." <<  std::endl;
