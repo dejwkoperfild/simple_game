@@ -124,6 +124,11 @@ struct Game
         return treasures == 0;
     }
 
+    bool is_lost() const
+    {
+        return !player.is_alive();
+    }
+
 };
 
 void Game::move_player(char direction)
@@ -212,7 +217,7 @@ int main()
         std::cout << "Twoja obecna ilosc punktów to: " << game.player.score << '\n';
         std::cout << "Pozostałe skarby: " << game.treasures << '\n';
         std::cout << "Życie: " << game.player.get_health() << '\n';
-        if (!game.player.is_alive())
+        if (game.is_lost())
         {
             std::cout << "Przegrałeś!" << std::endl;
             break;
