@@ -106,6 +106,8 @@ struct Game
 
     void display_board() const;
 
+    void display_status() const;
+
     void count_treasures()
     {
         treasures = 0;
@@ -195,6 +197,13 @@ void Game::display_board() const
     }
 }
 
+void Game::display_status() const
+{
+    std::cout << "Twoja obecna ilosc punktów to: " << player.score << '\n';
+    std::cout << "Pozostałe skarby: " << treasures << '\n';
+    std::cout << "Życie: " << player.get_health() << '\n';
+}
+
 int main()
 {
     Game game;
@@ -214,9 +223,7 @@ int main()
             break;
         game.move_player(direction);
         game.display_board();
-        std::cout << "Twoja obecna ilosc punktów to: " << game.player.score << '\n';
-        std::cout << "Pozostałe skarby: " << game.treasures << '\n';
-        std::cout << "Życie: " << game.player.get_health() << '\n';
+        game.display_status();
         if (game.is_lost())
         {
             std::cout << "Przegrałeś!" << std::endl;
