@@ -2,31 +2,8 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include "Player.h"
 
-
-struct Player
-{
-    int x = 1;
-    int y = 1;
-    int score = 0;
-    
-
-    void take_damage(int damage)
-    {
-        if (damage < 0)
-            throw std::invalid_argument("Obrażenia nie mogą być ujemne!");
-        
-        this->health -=damage;
-        if(this->health < 0)
-            this->health = 0;
-    }
-
-    bool is_alive() const {return this->health>0;}
-    int get_health() const {return this->health;}
-
-    private:
-        int health = 3;
-};
 
 struct Enemy
 {
