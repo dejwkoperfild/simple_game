@@ -3,45 +3,8 @@
 #include <string>
 #include <stdexcept>
 #include "Player.h"
+#include "Enemy.h"
 
-
-struct Enemy
-{
-    int x;
-    int y;
-
-    private:
-    int health;
-
-    public:
-
-    Enemy(int start_x, int start_y, int start_health)
-    : x(start_x), y(start_y), health(start_health)
-    {
-        if (start_health < 0)
-            throw std::invalid_argument("Zdrowie nie może być ujemne!");
-    }
-
-    void take_damage(int damage)
-    {
-        if (damage < 0)
-            throw std::invalid_argument("Obrażenia nie mogą być ujemne!");
-        
-        this->health -=damage;
-        if(this->health < 0)
-            this->health = 0;
-    }
-
-    bool is_alive() const
-{
-    return this->health>0;
-}
-
-    int get_health() const
-    {
-        return this->health;
-    }
-};
 
 void fight(Player& player, Enemy& enemy, std::vector<std::string>& b)
 {
