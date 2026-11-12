@@ -131,6 +131,8 @@ struct Game
         return !player.is_alive();
     }
 
+    void run();
+
 };
 
 void Game::move_player(char direction)
@@ -204,42 +206,40 @@ void Game::display_status() const
     std::cout << "Życie: " << player.get_health() << '\n';
 }
 
-int main()
+void Game::run()
 {
-    Game game;
-    std::cout << "Liczba punktów gracz: " << game.player.score << std::endl;
-    std::cout << "Zdrowie gracza: " << game.player.get_health() << std::endl;
-    game.count_treasures();
-    std::cout << "Liczba skarbów na planszy: " << game.treasures << std::endl;
+    count_treasures();
+    std::cout << "Liczba skarbów na planszy: " << treasures << std::endl;
     std::cout << "Witaj w Dungeon Explorer!" << std::endl;
-
-    // wyświetlenie planszy
-    game.display_board();
-
+    display_board();
+    display_status();
     char direction;
     std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
     while (std::cin >> direction){
         if (direction == 'q')
             break;
-        game.move_player(direction);
-        game.display_board();
-        game.display_status();
-        if (game.is_lost())
+        move_player(direction);
+        display_board();
+        display_status();
+        if (is_lost())
         {
             std::cout << "Przegrałeś!" << std::endl;
             break;
         }
-        if (game.is_won())
+        if (is_won())
         {
             std::cout << "Gratulacje! Zebrałeś wszystkie skarby!" << std::endl;
-            std::cout << "Twój końcowy wynik: " << game.player.score << " punktów." <<  std::endl;
+            std::cout << "Twój końcowy wynik: " << player.score << " punktów." <<  std::endl;
             break;
         }
         std:: cout << "Podaj kierunek (w/a/s/d), q - wyjście: ";
     }
+}
 
-   
-
+int main()
+{
+    Game game;
+    game.run();
    
     return 0;
 }
